@@ -8,14 +8,14 @@ const variants = {
   inverseRed: 'bg-transparent text-red-500 border-red-500 hover:bg-red-500 hover:text-white disabled:hover:bg-transparent disabled:hover:text-red-500',
   primaryBlack: 'bg-black text-white border-transparent hover:bg-slate-900 disabled:hover:bg-slate-800',
   inverseBlack: 'bg-transparent text-black border-black hover:bg-black hover:text-white disabled:hover:bg-transparent disabled:hover:text-black',
-}
+};
 
 const sizes = {
   xs: 'py-1.5 px-2 text-xs',
   sm: 'py-2 px-4 text-sm',
   md: 'py-2 px-6 text-md',
   lg: 'py-3 px-8 text-lg',
-}
+};
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: keyof typeof variants;
@@ -50,7 +50,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         type={type}
-        className={`flex justify-center items-center border-2 disabled:opacity-70 disabled:cursor-not-allowed rounded-lg shadow font-medium transition-colors focus:outline-none ${variants[variant]} ${sizes[size]} ${className}`}
+        className={`flex justify-center items-center border-2 disabled:opacity-70 disabled:cursor-not-allowed rounded-full shadow font-medium transition-colors focus:outline-none ${variants[variant]} ${sizes[size]} ${className}`}
         {...props}
       >
         <span className='mx-2 flex items-center justify-center'>{props.children}</span>
@@ -58,3 +58,5 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     );
   }
 );
+
+Button.displayName = 'Button';

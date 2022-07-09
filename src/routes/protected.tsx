@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from 'react-router';
 
 import { MainLayout } from '../components/Layout';
-import { Recipes, Fridge, Explore, Landing } from '../pages';
+import { Recipes, Fridge, Explore } from '../pages';
 
 const App = () => {
   return (
@@ -19,7 +19,6 @@ export const protectedRoutes = [
       { path: '/recipes', element: <Recipes /> },
       { path: '/fridge', element: <Fridge /> },
       { path: '/explore', element: <Explore /> },
-      { path: '/', element: <Landing /> },
       { path: '*', element: <Navigate to="." /> },
     ],
   },

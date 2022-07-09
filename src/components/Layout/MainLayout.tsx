@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import {
   ArchiveIcon,
   BeakerIcon,
@@ -51,7 +51,7 @@ const MobileBottombar = () => {
 
 const Logo = () => {
   return (
-    <NavLink to='./'>
+    <Link to='./'>
       <div className='mr-2 cursor-pointer flex items-center justify-center'>
         <img
           src={logo}
@@ -59,7 +59,7 @@ const Logo = () => {
           className='h-10 w-10 m-1 md:m-2.5'
         />
       </div>
-    </NavLink>
+    </Link>
   );
 };
 
@@ -95,12 +95,7 @@ const Topbar = () => {
           </nav>
         </div>
         <div className='flex items-center gap-4'>
-          {/* <NewMenu />
-          <NotificationMenu />
-          <UserMenu /> */}
-          <div></div>
-          <div></div>
-          <div></div>
+          {/* TODO user menu */}
         </div>
       </div>
     </div>
@@ -113,7 +108,7 @@ type MainLayoutProps = {
 
 export const MainLayout = ({ children }: MainLayoutProps) => {
   return (
-    <div className='h-screen pt-16 pb-14 sm:pb-0 flex overflow-hidden bg-slate-200'>
+    <div className='h-screen pt-16 pb-14 sm:pb-0 flex overflow-hidden bg-slate-100'>
       <MobileBottombar />
       <Topbar />
       <main className='flex-1 relative overflow-y-auto focus:outline-none max-w-7xl mx-auto sm:px-6 sm:py-2 md:px-8'>

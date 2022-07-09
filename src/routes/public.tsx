@@ -1,18 +1,26 @@
 import { Navigate, Outlet } from 'react-router';
-import { Landing } from '../pages';
+
+import { PublicLayout } from '../components/Layout/PublicLayout';
+import { Home, Login, Register } from '../pages';
 
 const App = () => {
   return (
-    <Outlet />
+    <PublicLayout>
+      <Outlet />
+    </PublicLayout>
   );
 };
+
+// TODO add auth routes (login, logout)
 
 export const publicRoutes = [
   {
     path: '/',
     element: <App />,
     children: [
-      { path: '/', element: <Landing /> },
+      { path: '/login', element: <Login /> },
+      { path: '/register', element: <Register /> },
+      { path: '/', element: <Home /> },
       { path: '*', element: <Navigate to="." /> },
     ]
   }

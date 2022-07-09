@@ -1,11 +1,11 @@
 import * as React from 'react';
 
-export const Landing = () => {
+export const Dashboard = () => {
   React.useEffect(() => {
     document.title = 'Cookie - Home';
   }, []);
 
   return (
-    <div>Landing</div>
+    <div>Dashboard</div>
   );
 };
