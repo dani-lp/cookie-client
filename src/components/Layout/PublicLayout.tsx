@@ -55,7 +55,7 @@ export const PublicLayout = ({ children }: PublicLayoutProps) => {
   return (
     <div className='h-screen pt-16 pb-14 sm:pb-0 flex overflow-hidden bg-slate-100'>
       <Topbar />
-      <main className='flex-1 relative overflow-y-auto focus:outline-none max-w-7xl mx-auto sm:px-6 sm:py-2 md:px-8'>
+      <main className='flex-1 relative overflow-y-auto focus:outline-none max-w-7xl mx-auto sm:px-6 py-2 md:px-8'>
         {children}
       </main>
     </div>

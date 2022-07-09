@@ -3,7 +3,7 @@ import { Ingredient, Recipe, Unit, User } from '../types';
 
 interface UserSlice {
   user: User | null;
-  setUser: (user: User) => void;
+  setUser: (user: User | null) => void;
 }
 const createUserSlice: StateCreator<UserSlice, [], []> = (set) => ({
   user: null,

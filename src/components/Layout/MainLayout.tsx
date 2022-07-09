@@ -5,8 +5,11 @@ import {
   BeakerIcon,
   BookmarkAltIcon,
 } from '@heroicons/react/outline';
+import { axios } from '../../lib/axios';
 
 import logo from '../../assets/logo.png';
+import { Button } from '../Elements/Button';
+import { useStore } from '../../store/useStore';
 
 type NavigationItem = {
   name: string;
@@ -74,7 +77,7 @@ const TopNavigation = () => {
           className={isActive => 'border-2 border-transparent h-full flex items-center justify-center mx-1.5 md:mx-2 hover:text-violet-600' + (isActive.isActive ? ' text-violet-500 font-medium border-b-violet-500' : ' text-gray-400')}
         >
           <item.icon
-            className="h-6 w-6 mr-2 hidden lg:block"
+            className="h-6 w-6 mr-2"
             aria-hidden="true"
           />
           <span className='transition-colors'>{item.name}</span>
@@ -85,6 +88,8 @@ const TopNavigation = () => {
 };
 
 const Topbar = () => {
+  const setUser = useStore((state) => state.setUser);
+
   return (
     <div className='absolute top-0 w-screen h-16 bg-white shadow flex justify-center z-10'>
       <div className='max-w-7xl h-full w-full px-3 flex items-center justify-between'>
@@ -96,6 +101,21 @@ const Topbar = () => {
         </div>
         <div className='flex items-center gap-4'>
           {/* TODO user menu */}
+          <Button
+            size='sm'
+            onClick={() => {
+              axios.post('/auth/logout')
+                .then(result => {
+                  console.log(result);
+                  setUser(null);
+                  // TODO navigate directly to /login without content flash
+                }).catch(error => {
+                  console.error(error);
+                });
+            }}
+          >
+            Log out
+          </Button>
         </div>
       </div>
     </div>
