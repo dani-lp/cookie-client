@@ -4,12 +4,14 @@ import {
   ArchiveIcon,
   BeakerIcon,
   BookmarkAltIcon,
+  LogoutIcon,
 } from '@heroicons/react/outline';
 import { axios } from '../../lib/axios';
 
 import logo from '../../assets/logo.png';
 import { Button } from '../Elements/Button';
 import { useStore } from '../../store/useStore';
+import { Modal } from '../Overlay';
 
 type NavigationItem = {
   name: string;
@@ -88,37 +90,51 @@ const TopNavigation = () => {
 };
 
 const Topbar = () => {
+  const [logoutModalOpen, setLogoutModalOpen] = React.useState(false);
   const setUser = useStore((state) => state.setUser);
 
+  const logoutHandler = () => {
+    // TODO use improved useFetch
+    axios.post('/auth/logout')
+      .then(result => {
+        console.log(result);
+        setUser(null);
+        // TODO navigate directly to /login without content flash
+      }).catch(error => {
+        console.error(error);
+      });
+  };
+
   return (
-    <div className='absolute top-0 w-screen h-16 bg-white shadow flex justify-center z-10'>
-      <div className='max-w-7xl h-full w-full px-3 flex items-center justify-between'>
-        <div className='flex items-center h-full'>
-          <Logo />
-          <nav className='hidden sm:flex items-center h-full'>
-            <TopNavigation />
-          </nav>
-        </div>
-        <div className='flex items-center gap-4'>
-          {/* TODO user menu */}
-          <Button
-            size='sm'
-            onClick={() => {
-              axios.post('/auth/logout')
-                .then(result => {
-                  console.log(result);
-                  setUser(null);
-                  // TODO navigate directly to /login without content flash
-                }).catch(error => {
-                  console.error(error);
-                });
-            }}
-          >
-            Log out
-          </Button>
+    <>
+      <div className='absolute top-0 w-screen h-16 bg-white shadow flex justify-center z-10'>
+        <div className='max-w-7xl h-full w-full px-3 flex items-center justify-between'>
+          <div className='flex items-center h-full'>
+            <Logo />
+            <nav className='hidden sm:flex items-center h-full'>
+              <TopNavigation />
+            </nav>
+          </div>
+          <div className='flex items-center gap-4'>
+            {/* TODO user menu */}
+            <Button
+              size='xs'
+              onClick={() => setLogoutModalOpen(true)}
+            >
+              <LogoutIcon className="text-white h-6 w-6" />
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+      <Modal
+        open={logoutModalOpen}
+        setOpen={setLogoutModalOpen}
+        title="Log out"
+        content="Are you sure you want to log out of Cookie?"
+        acceptText="Log out"
+        acceptCallback={logoutHandler}
+      />
+    </>
   );
 };
 
