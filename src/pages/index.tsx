@@ -3,3 +3,4 @@ export * from './explore';
 export * from './fridge';
 export * from './home';
 export * from './recipes';
+export * from './recipes/RecipeDetail';

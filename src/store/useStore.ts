@@ -26,19 +26,43 @@ const createUnitSlice: StateCreator<UnitSlice, [], []> = (set) => ({
 interface IngredientSlice {
   ingredients: Ingredient[];
   loadIngredients: (ingredients: Ingredient[]) => void;
+  addIngredient: (ingredient: Ingredient) => void;
 }
 const createIngredientSlice: StateCreator<IngredientSlice, [], []> = (set) => ({
-  ingredients: [],
+  ingredients: [
+    {
+      id: '1',
+      name: 'Eggs',
+      unit: ''
+    },
+    {
+      id: '2',
+      name: 'Tacos',
+      unit: ''
+    },
+    {
+      id: '3',
+      name: 'Salt',
+      unit: ''
+    },
+  ],
   loadIngredients: (ingredients) => set(() => ({ ingredients })),
+  addIngredient: (ingredient) => set((state) => ({ ingredients: state.ingredients.concat(ingredient) })),
 });
 
 interface RecipeSlice {
   recipes: Recipe[];
   loadRecipes: (recipes: Recipe[]) => void;
+  addRecipe: (recipe: Recipe) => void;
 }
 const createRecipeSlice: StateCreator<RecipeSlice, [], []> = (set) => ({
   recipes: [],
   loadRecipes: (recipes) => set(() => ({ recipes })),
+  addRecipe: (recipe) => set((state) => (
+    state.recipes.some(r => r.id === recipe.id)
+      ? state
+      : ({ recipes: state.recipes.concat(recipe) })
+  )),
 });
 
 export const useStore = create<UserSlice & UnitSlice & IngredientSlice & RecipeSlice>()((...a) => ({

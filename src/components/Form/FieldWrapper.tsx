@@ -14,7 +14,7 @@ export const FieldWrapper = ({ label, className, children }: FieldWrapperProps) 
     <>
       <label className={`block text-sm font-medium text-gray-700 text-left ${className}`}>
         {label}
-        <div className="mt-1">{children}</div>
+        <div className={label && 'mt-1'}>{children}</div>
       </label>
     </>
   );

@@ -1,12 +1,12 @@
 export interface Unit {
   id: string;
-  unit: string;
+  name: string;
 }
 
 export interface Ingredient {
   id: string;
   name: string;
-  unit: Unit;
+  unit: string;
 }
 
 // specific to users; no foreign key added though,
@@ -18,13 +18,20 @@ export interface FridgeEntry {
   info?: string;
 }
 
+export interface IngredientAmountDTO {
+  amount: number;
+  ingredient: string; // ingredient name
+  ingredientId: string;
+}
+
 export interface Recipe {
   id: string;
-  user: User;
-  ingredients: Ingredient[];
+  user: string;
   title: string;
   content: string;  // TODO check if long content can be stored on a string
   cookMinutes?: number;
+  imageUrl?: string;
+  ingredients: IngredientAmountDTO[];
 }
 
 export interface User {

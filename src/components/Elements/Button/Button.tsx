@@ -6,7 +6,7 @@ const variants = {
   inverse: 'bg-transparent text-violet-500 border-violet-500 hover:bg-violet-500 hover:text-white disabled:hover:bg-transparent disabled:hover:text-violet-500',
   primaryRed: 'bg-red-500 text-white border-transparent hover:bg-red-600 disabled:hover:bg-red-500',
   inverseRed: 'bg-transparent text-red-500 border-red-500 hover:bg-red-500 hover:text-white disabled:hover:bg-transparent disabled:hover:text-red-500',
-  primaryBlack: 'bg-black text-white border-transparent hover:bg-slate-900 disabled:hover:bg-slate-800',
+  primaryBlack: 'bg-black text-white border-black hover:bg-white hover:text-black disabled:hover:bg-slate-800',
   inverseBlack: 'bg-transparent text-black border-black hover:bg-black hover:text-white disabled:hover:bg-transparent disabled:hover:text-black',
 };
 

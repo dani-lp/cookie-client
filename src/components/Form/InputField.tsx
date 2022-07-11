@@ -19,6 +19,8 @@ export const InputField = (
     onChange,
     className,
     wrapperClassName,
+    placeholder = '',
+    autoFocus = false,
     children
   }: InputFieldProps) => {
   return (
@@ -30,7 +32,9 @@ export const InputField = (
         name={name}
         value={value}
         required={required}
+        placeholder={placeholder}
         onChange={onChange}
+        autoFocus={autoFocus}
       />
       {children}
     </FieldWrapper>
