@@ -10,8 +10,8 @@ import { axios } from '../../lib/axios';
 
 import logo from '../../assets/logo.png';
 import { Button } from '../Elements/Button';
+import { ConfirmModal } from '../Overlay/ConfirmModal';
 import { useStore } from '../../store/useStore';
-import { Modal } from '../Overlay';
 
 type NavigationItem = {
   name: string;
@@ -126,7 +126,7 @@ const Topbar = () => {
           </div>
         </div>
       </div>
-      <Modal
+      <ConfirmModal
         open={logoutModalOpen}
         setOpen={setLogoutModalOpen}
         title="Log out"

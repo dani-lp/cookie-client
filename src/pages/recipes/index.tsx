@@ -17,6 +17,8 @@ export const Recipes = () => {
     loadRecipes: state.loadRecipes,
   }), shallow);
   const search = useSearch(state => state.recipeSearch);
+
+  // TODO check for unnecessary requests
   const { response, error, isLoading } = useFetch('/recipes');
 
   // TODO use Helmet

@@ -5,6 +5,7 @@ import { Button } from '../../../components/Elements/Button';
 import { SearchBar } from './SearchBar';
 import { IngredientsMenu } from './IngredientsMenu';
 import { useSearch } from '../stores/search';
+import { NewRecipeMenu } from './NewRecipeMenu';
 
 interface ToggleProps {
   open: boolean;
@@ -20,7 +21,8 @@ const ShowOptionsToggle = ({ open }: ToggleProps) => {
 
 export const Header = () => {
   const [open, setOpen] = React.useState(false);
-  const [menuOpen, setMenuOpen] = React.useState(false);
+  const [recipeMenuOpen, setRecipeMenuOpen] = React.useState(false);
+  const [ingredientsMenuOpen, setIngredientsMenuOpen] = React.useState(false);
   const { recipeSearch, setRecipeSearch } = useSearch();
 
   const handleSearchChange = (event: React.FormEvent<HTMLInputElement>) => {
@@ -44,21 +46,23 @@ export const Header = () => {
           <div className='flex flex-col sm:flex-row justify-between gap-2'>
             <Button
               variant='primaryBlack'
-            // TODO onCLick
+              onClick={() => setRecipeMenuOpen(true)}
+            // TODO onClick open new ingredients modal, multiple steps (advance with 'next' button, return to step 1 on close)
             >
               <PlusIcon className="h-5 w-5 mr-1" aria-hidden="true" />
               New recipe
             </Button>
             <Button
               variant='inverseBlack'
-              onClick={() => setMenuOpen(true)}
+              onClick={() => setIngredientsMenuOpen(true)}
             >
               Ingredients menu
             </Button>
           </div>
         </div>
       </div>
-      <IngredientsMenu open={menuOpen} setOpen={setMenuOpen} />
+      <NewRecipeMenu open={recipeMenuOpen} setOpen={setRecipeMenuOpen} />
+      <IngredientsMenu open={ingredientsMenuOpen} setOpen={setIngredientsMenuOpen} />
     </>
   );
 };

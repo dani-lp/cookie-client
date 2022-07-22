@@ -29,23 +29,7 @@ interface IngredientSlice {
   addIngredient: (ingredient: Ingredient) => void;
 }
 const createIngredientSlice: StateCreator<IngredientSlice, [], []> = (set) => ({
-  ingredients: [
-    {
-      id: '1',
-      name: 'Eggs',
-      unit: ''
-    },
-    {
-      id: '2',
-      name: 'Tacos',
-      unit: ''
-    },
-    {
-      id: '3',
-      name: 'Salt',
-      unit: ''
-    },
-  ],
+  ingredients: [],
   loadIngredients: (ingredients) => set(() => ({ ingredients })),
   addIngredient: (ingredient) => set((state) => ({ ingredients: state.ingredients.concat(ingredient) })),
 });

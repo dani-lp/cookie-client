@@ -72,7 +72,7 @@ export const IngredientsMenu = ({ open, setOpen }: IngredientsMenuProps) => {
 
   return (
     <SlideOver open={open} setOpen={setOpen} title="Ingredients and units">
-      <h3 className='mb-2'>Create ingredient</h3>
+      <h3 className='mb-2 font-semibold'>Create ingredient</h3>
       <InputField
         value={ingredientName}
         onChange={ingredientHandler}
