@@ -1,10 +1,14 @@
 import * as React from 'react';
 import shallow from 'zustand/shallow';
-import { ExclamationCircleIcon } from '@heroicons/react/solid';
+import { ExclamationCircleIcon, PlusIcon } from '@heroicons/react/solid';
 
-import { useStore } from '../../../store/useStore';
-import { useFetch } from '../../../hooks/useFetch';
 import { Spinner } from '../../../components/Elements/Spinner';
+import { Button } from '../../../components/Elements/Button';
+import { SearchBar } from './SearchBar';
+import { axios } from '../../../lib/axios';
+import { useStore } from '../../../store/useStore';
+import { useSearch } from '../stores/search';
+import { useFetch } from '../../../hooks/useFetch';
 import { Unit } from '../../../types';
 
 interface UnitProps {
@@ -25,16 +29,28 @@ const UnitItem = ({ name, selected = false, onClick }: UnitProps) => {
 };
 
 
+interface UnitResponse {
+  data: Unit;
+}
+
 interface SelectorProps {
   selectedUnit: string;
   setSelectedUnit: (unit: string) => void;
 }
 
 export const UnitSelector = ({ selectedUnit, setSelectedUnit }: SelectorProps) => {
-  const { units, loadUnits } = useStore((state) => ({
+  const { units, loadUnits, addUnit } = useStore((state) => ({
     units: state.units,
-    loadUnits: state.loadUnits
+    loadUnits: state.loadUnits,
+    addUnit: state.addUnit,
   }), shallow);
+  const { unitSearch, setUnitSearch } = useSearch((state) => ({
+    unitSearch: state.unitSearch,
+    setUnitSearch: state.setUnitSearch,
+  }), shallow);
+
+  const [unitError, setUnitError] = React.useState('');
+
   const handleClick = (id: string) => () => setSelectedUnit(id);
   const { response, error, isLoading } = useFetch('/units');
 
@@ -49,6 +65,37 @@ export const UnitSelector = ({ selectedUnit, setSelectedUnit }: SelectorProps) =
     }
   }, [response]);
 
+  const handleUnitSearchChange = (event: React.FormEvent<HTMLInputElement>) => {
+    const value = event.currentTarget.value;
+    setUnitSearch(value);
+
+    if (units.some(unit => unit.name === value)) {
+      setUnitError('A unit with that name already exists!');
+    } else {
+      setUnitError('');
+    }
+  };
+
+  const handleAddUnit = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    if (unitError.length > 0) return;
+
+    // axios post
+    axios.post('/units', { name: unitSearch })
+      .then((result: UnitResponse) => {
+        addUnit(result.data);
+      }).catch(error => {
+        console.log(error);
+        setUnitError('There has been an unknown error...');
+      });
+    setUnitSearch('');
+  };
+
+  const filteredUnits = unitSearch.length > 0
+    ? units.filter(unit => unit.name.toLowerCase().includes(unitSearch.toLowerCase()))
+    : units;
+
   const content = error
     ? (
       <div className='p-2 h-full flex flex-col items-center justify-center'>
@@ -59,7 +106,7 @@ export const UnitSelector = ({ selectedUnit, setSelectedUnit }: SelectorProps) =
     )
     : !isLoading
       // TODO empty units, unit creator, ingredient list, duplicate checks
-      ? units.map(unit => (
+      ? filteredUnits.map(unit => (
         <UnitItem
           key={unit.id}
           name={unit.name}
@@ -75,10 +122,25 @@ export const UnitSelector = ({ selectedUnit, setSelectedUnit }: SelectorProps) =
       );
 
   return (
-    <div className='mt-1'>
-      <ul className='border-2 border-gray-300 w-full overflow-y-auto h-44 rounded-lg shadow-sm divide-y-2 divide-gray-200'>
-        {content}
-      </ul>
-    </div>
+    <>
+      <form className="flex items-center justify-between gap-2" onSubmit={handleAddUnit}>
+        <SearchBar
+          value={unitSearch}
+          changeHandler={handleUnitSearchChange}
+          placeholder="Unit..."
+          className={`h-10 ${unitError && 'focus:ring-red-500 focus:border-red-500'}`}
+        />
+        {/* TODO rounded addition button */}
+        <Button className="w-4 rounded-md" type="submit">
+          <PlusIcon className="h-5 w-5" />
+        </Button>
+      </form>
+      {unitError && unitError}
+      <div className="mt-1">
+        <ul className="border-2 border-gray-300 w-full overflow-y-auto h-44 rounded-lg shadow-sm divide-y-2 divide-gray-200">
+          {content}
+        </ul>
+      </div>
+    </>
   );
 };

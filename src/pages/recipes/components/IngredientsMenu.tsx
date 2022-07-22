@@ -35,7 +35,7 @@ export const IngredientsMenu = ({ open, setOpen }: IngredientsMenuProps) => {
     setIngredientName(event.currentTarget.value);
   };
 
-  const createHandler = async (event: React.MouseEvent) => {
+  const handleCreateIngredient = async (event: React.MouseEvent) => {
     event.preventDefault();
     setLoading(true);
 
@@ -50,6 +50,7 @@ export const IngredientsMenu = ({ open, setOpen }: IngredientsMenuProps) => {
       unit: selectedUnit,
     };
 
+    // TODO move to hook
     axios.post('/ingredients', newIngredient)
       .then((result: IngredientResponse) => {
         addIngredient(result.data);
@@ -80,6 +81,7 @@ export const IngredientsMenu = ({ open, setOpen }: IngredientsMenuProps) => {
       >
         {error && <span className='w-full'>{error}</span>}
       </InputField>
+
       <h4 className='text-sm'>Measurement unit</h4>
       <UnitSelector
         selectedUnit={selectedUnit}
@@ -87,7 +89,7 @@ export const IngredientsMenu = ({ open, setOpen }: IngredientsMenuProps) => {
       />
       <Button
         className='w-full mt-4'
-        onClick={createHandler}
+        onClick={handleCreateIngredient}
         disabled={loading}
       >
         Add ingredient

@@ -1,11 +1,15 @@
 import create from 'zustand';
 
 interface SearchState {
-  search: string;
-  setSearch: (search: string) => void;
+  recipeSearch: string;
+  setRecipeSearch: (recipeSearch: string) => void;
+  unitSearch: string;
+  setUnitSearch: (unitSearch: string) => void;
 }
 
 export const useSearch = create<SearchState>((set) => ({
-  search: '',
-  setSearch: (search) => set(() => ({ search })),
+  recipeSearch: '',
+  setRecipeSearch: (recipeSearch) => set(() => ({ recipeSearch })),
+  unitSearch: '',
+  setUnitSearch: (unitSearch) => set(() => ({ unitSearch })),
 }));

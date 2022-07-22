@@ -16,7 +16,7 @@ export const Recipes = () => {
     recipes: state.recipes,
     loadRecipes: state.loadRecipes,
   }), shallow);
-  const search = useSearch(state => state.search);
+  const search = useSearch(state => state.recipeSearch);
   const { response, error, isLoading } = useFetch('/recipes');
 
   // TODO use Helmet

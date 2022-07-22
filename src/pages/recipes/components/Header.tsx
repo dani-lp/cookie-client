@@ -21,10 +21,10 @@ const ShowOptionsToggle = ({ open }: ToggleProps) => {
 export const Header = () => {
   const [open, setOpen] = React.useState(false);
   const [menuOpen, setMenuOpen] = React.useState(false);
-  const { search, setSearch } = useSearch();
+  const { recipeSearch, setRecipeSearch } = useSearch();
 
   const handleSearchChange = (event: React.FormEvent<HTMLInputElement>) => {
-    setSearch(event.currentTarget.value);
+    setRecipeSearch(event.currentTarget.value);
   };
 
   return (
@@ -37,7 +37,7 @@ export const Header = () => {
         </div>
         <div className={!open ? 'hidden' : 'flex flex-col justify-between gap-2'}>
           <SearchBar
-            value={search}
+            value={recipeSearch}
             changeHandler={handleSearchChange}
             placeholder="Search your recipes..."
           />

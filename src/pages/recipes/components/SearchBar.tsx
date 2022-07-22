@@ -5,14 +5,15 @@ type SearchBarProps = {
   value: string;
   changeHandler: (event: React.FormEvent<HTMLInputElement>) => void;
   placeholder?: string;
+  className?: string;
 };
 
-export const SearchBar = ({ value, changeHandler, placeholder = '' }: SearchBarProps) => {
+export const SearchBar = ({ value, changeHandler, placeholder = '', className = '' }: SearchBarProps) => {
   return (
     <InputField
       value={value}
       onChange={changeHandler}
-      className='relative pl-11'
+      className={`relative pl-11 ${className}`}
       wrapperClassName='relative'
       placeholder={placeholder}
       autoFocus
