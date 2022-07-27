@@ -107,7 +107,7 @@ const Topbar = () => {
 
   return (
     <>
-      <div className='absolute top-0 w-screen h-16 bg-white shadow flex justify-center z-10'>
+      <div className='absolute top-0 w-screen h-16 bg-white shadow flex justify-center z-20'>
         <div className='max-w-7xl h-full w-full px-3 flex items-center justify-between'>
           <div className='flex items-center h-full'>
             <Logo />
