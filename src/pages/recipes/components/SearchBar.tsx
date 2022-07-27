@@ -16,7 +16,6 @@ export const SearchBar = ({ value, changeHandler, placeholder = '', className = 
       className={`relative pl-11 ${className}`}
       wrapperClassName='relative'
       placeholder={placeholder}
-      autoFocus
     >
       <div className="absolute inset-y-0 left-3 flex items-center">
         <SearchIcon className='h-6 w-6 text-gray-600' />

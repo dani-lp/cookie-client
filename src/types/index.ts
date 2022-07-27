@@ -7,6 +7,7 @@ export interface Ingredient {
   id: string;
   name: string;
   unit: string;
+  unitName: string;
 }
 
 // specific to users; no foreign key added though,
@@ -32,6 +33,20 @@ export interface Recipe {
   cookMinutes?: number;
   imageUrl?: string;
   ingredients: IngredientAmountDTO[];
+}
+
+// TODO model this properly, this is ugly af
+export interface RecipeDTO {
+  id?: string;
+  user: string;
+  title: string;
+  content: string;
+  cookMinutes?: number;
+  imageUrl?: string;
+  ingredients: {
+    amount: number;
+    ingredient: string; // is
+  }[];
 }
 
 export interface User {

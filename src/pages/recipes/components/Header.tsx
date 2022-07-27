@@ -31,7 +31,7 @@ export const Header = () => {
 
   return (
     <>
-      <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-white px-4 py-1.5 sm:rounded-md shadow'>
+      <header className='flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-white px-4 py-1.5 sm:rounded-md shadow'>
         {/* TODO extract to component */}
         <div onClick={() => setOpen(!open)} className='flex items-center justify-between cursor-pointer group'>
           <h1 className='font-bold text-2xl mt-0.5 sm:mt-0'>Your recipes</h1>
@@ -60,7 +60,7 @@ export const Header = () => {
             </Button>
           </div>
         </div>
-      </div>
+      </header>
       <NewRecipeMenu open={recipeMenuOpen} setOpen={setRecipeMenuOpen} />
       <IngredientsMenu open={ingredientsMenuOpen} setOpen={setIngredientsMenuOpen} />
     </>

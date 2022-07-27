@@ -7,7 +7,7 @@ const variants = {
   primaryRed: 'bg-red-500 text-white border-transparent hover:bg-red-600 disabled:hover:bg-red-500',
   inverseRed: 'bg-transparent text-red-500 border-red-500 hover:bg-red-500 hover:text-white disabled:hover:bg-transparent disabled:hover:text-red-500',
   primaryBlack: 'bg-black text-white border-black hover:bg-white hover:text-black disabled:hover:bg-slate-800',
-  inverseBlack: 'bg-transparent text-black border-black hover:bg-black hover:text-white disabled:hover:bg-transparent disabled:hover:text-black',
+  inverseBlack: 'bg-transparent text-black border-black hover:bg-black hover:text-white disabled:text-gray-800 disabled:border-gray-600 disabled:hover:bg-transparent',
 };
 
 const sizes = {
@@ -22,6 +22,7 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   size?: keyof typeof sizes;
   asLink?: boolean;
   to?: string;
+  squared?: boolean;
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -33,6 +34,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       size = 'md',
       asLink = false,
       to = '',
+      squared = false,
       ...props
     },
     ref
@@ -50,7 +52,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         type={type}
-        className={`flex justify-center items-center border-2 disabled:opacity-70 disabled:cursor-not-allowed rounded-full shadow font-medium transition-colors focus:outline-none ${variants[variant]} ${sizes[size]} ${className}`}
+        className={`flex justify-center items-center border-2 disabled:opacity-70 disabled:cursor-not-allowed ${squared ? 'rounded-lg' : 'rounded-full'} shadow font-medium transition-colors focus:outline-none ${variants[variant]} ${sizes[size]} ${className}`}
         {...props}
       >
         <span className='mx-2 flex items-center justify-center'>{props.children}</span>

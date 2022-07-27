@@ -131,7 +131,7 @@ export const UnitSelector = ({ selectedUnit, setSelectedUnit }: SelectorProps) =
           className={`h-10 ${unitError && 'focus:ring-red-500 focus:border-red-500'}`}
         />
         {/* TODO rounded addition button */}
-        <Button className="w-4 rounded-md" type="submit">
+        <Button className="w-4 rounded-md" type="submit" squared>
           <PlusIcon className="h-5 w-5" />
         </Button>
       </form>

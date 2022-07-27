@@ -25,7 +25,7 @@ export const RecipeItem = ({ recipe }: RecipeItemProps) => {
         alt={recipe.title}
         className="w-full h-52 object-cover"
       />
-      <div className="p-4">
+      <div className="p-4 bg-violet-100">
         {recipe.cookMinutes && (
           // TODO calories, ...
           <div className="flex items-center justify-start mb-1 text-sm text-gray-700">
