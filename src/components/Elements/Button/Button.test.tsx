@@ -1,40 +1,45 @@
-import React from 'react';
+import { describe, expect, test, vi } from 'vitest';
 import { BrowserRouter as Router } from 'react-router-dom';
-import '@testing-library/jest-dom/extend-expect';
 import { render, screen } from '@testing-library/react';
-import { fireEvent } from '@testing-library/dom';
+import userEvent from '@testing-library/user-event';
 import { Button } from './Button';
 
 const buttonContent = 'This is a test button';
 
-test('renders content', () => {
-  render(<Button>{buttonContent}</Button>);
+describe('Button test', () => {
+  test('renders content', () => {
+    const { unmount } = render(<Button>{buttonContent}</Button>);
 
-  const button = screen.getByText(buttonContent);
+    const button = screen.getByText(buttonContent);
 
-  expect(button).toBeDefined();
-});
+    expect(button).toBeDefined();
+    unmount();
+  });
 
-test('user clicking works correctly', () => {
-  const mockHandler = jest.fn();
+  test('user clicking works correctly', async () => {
+    const mockHandler = vi.fn();
 
-  render(<Button onClick={mockHandler}>{buttonContent}</Button>);
-  
-  const button = screen.getByText(buttonContent);
-  fireEvent.click(button);
+    const { unmount } = render(<Button onClick={mockHandler}>{buttonContent}</Button>);
 
-  expect(mockHandler.mock.calls).toHaveLength(1);
-});
+    const button = screen.getByText(buttonContent);
 
-test('onClick not working when the button is disabled', () => {
-  const mockHandler = jest.fn();
+    await userEvent.click(button);
 
-  render(<Button disabled onClick={mockHandler}>{buttonContent}</Button>);
-  
-  const button = screen.getByText(buttonContent);
-  fireEvent.click(button);
+    expect(mockHandler.mock.calls).toHaveLength(1);
+    unmount();
+  });
 
-  expect(mockHandler.mock.calls).toHaveLength(0);
+  test('onClick not working when the button is disabled', async () => {
+    const mockHandler = vi.fn();
+
+    const { unmount } = render(<Button disabled onClick={mockHandler}>{buttonContent}</Button>);
+
+    const button = screen.getByText(buttonContent);
+    await userEvent.click(button);
+
+    expect(mockHandler.mock.calls).toHaveLength(0);
+    unmount();
+  });
 });
 
 test('renders <Link /> when using asLink and to props', () => {
@@ -45,7 +50,8 @@ test('renders <Link /> when using asLink and to props', () => {
       <Button asLink to={linkTo}>{buttonContent}</Button>
     </Router>
   );
-  
+
   const anchor = screen.getByRole('link');
   expect(anchor).toHaveAttribute('href', linkTo);
+  expect(anchor).toBeDefined();
 });

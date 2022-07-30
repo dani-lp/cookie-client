@@ -6,12 +6,12 @@ import { Ingredient } from '../../../types';
 
 interface IngredientListProps {
   ingredients: Ingredient[];
-  selectedIngredient: Ingredient | null;
-  setSelectedIngredient: (ingredient: Ingredient | null) => void;
+  selectedIngredientId: string;
+  setSelectedIngredientId: (ingredient: string) => void;
   className?: string;
 }
 
-export const IngredientList = ({ ingredients, selectedIngredient, setSelectedIngredient, className }: IngredientListProps) => {
+export const IngredientList = ({ ingredients, selectedIngredientId, setSelectedIngredientId, className }: IngredientListProps) => {
   const [search, setSearch] = React.useState('');
 
   const handleSearchChange = (event: React.FormEvent<HTMLInputElement>) => {
@@ -44,8 +44,8 @@ export const IngredientList = ({ ingredients, selectedIngredient, setSelectedIng
             ? (sortedIngredients().map(ingredient => (
               <li
                 key={ingredient.id}
-                className={`px-4 py-2 ${selectedIngredient?.id === ingredient.id ? 'bg-violet-500 text-white font-semibold' : 'hover:bg-violet-200 cursor-pointer'}`}
-                onClick={() => setSelectedIngredient(ingredient)}
+                className={`px-4 py-2 ${selectedIngredientId === ingredient.id ? 'bg-violet-500 text-white font-semibold' : 'hover:bg-violet-200 cursor-pointer'}`}
+                onClick={() => setSelectedIngredientId(ingredient.id)}
               >
                 {`${ingredient.name} ${ingredient.unitName !== 'Unit' ? `(${ingredient.unitName})` : ''}`}
               </li>

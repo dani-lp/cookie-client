@@ -24,7 +24,7 @@ import { Ingredient, IngredientAmountDTO, Recipe, RecipeDTO } from '../../../typ
 
 type ModalState = 0 | 1 | 2;
 
-type MenuSteps = 'title' | 'cookMinutes' | 'imageURL' | 'amount' | 'instructions';
+type MenuSteps = 'title' | 'cookMinutes' | 'imageUrl' | 'amount' | 'content';
 
 interface NewRecipeResponse {
   data: Recipe;
@@ -48,12 +48,13 @@ const recipeBase = {
 export const NewRecipeMenu = ({ open, setOpen }: MenuProps) => {
   const [step, setStep] = React.useState<ModalState>(0);
   const [recipe, setRecipe] = React.useState<Recipe>(recipeBase);
-  const [selectedIngredient, setSelectedIngredient] = React.useState<Ingredient | null>(null);
+  const [selectedIngredientId, setSelectedIngredientId] = React.useState<string>('');
   const [ingredientAmount, setIngredientAmount] = React.useState(1);
+
   const { ingredients, loadIngredients, addRecipe } = useStore((state) => ({
     ingredients: state.ingredients,
     loadIngredients: state.loadIngredients,
-    addRecipe: state.addRecipe
+    addRecipe: state.addRecipe,
   }), shallow);
 
   const listedIngredients = ingredients.filter(ingredient => {
@@ -70,7 +71,7 @@ export const NewRecipeMenu = ({ open, setOpen }: MenuProps) => {
       newIngredients.sort((a, b) => a.name.localeCompare(b.name));
       loadIngredients(newIngredients);
       if (newIngredients.length > 0) {
-        setSelectedIngredient(newIngredients[0]);
+        setSelectedIngredientId(newIngredients[0].id);
       }
     }
   }, [response]);
@@ -79,7 +80,7 @@ export const NewRecipeMenu = ({ open, setOpen }: MenuProps) => {
   React.useEffect(() => {
     if (!open) {
       setRecipe(recipeBase);
-      if (ingredients.length > 0) setSelectedIngredient(ingredients[0]);
+      if (ingredients.length > 0) setSelectedIngredientId(ingredients[0].id);
       setIngredientAmount(1);
       setStep(0);
     }
@@ -94,6 +95,16 @@ export const NewRecipeMenu = ({ open, setOpen }: MenuProps) => {
   // TODO use 'name' attribute
   const handleFormChange = (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, field: MenuSteps) => {
     const value = event.currentTarget.value;
+    const name = event.currentTarget.name;
+
+    if (name === 'amount') {
+      setIngredientAmount(parseInt(value));
+      return;
+    }
+    setRecipe({
+      ...recipe,
+      [name]: value
+    });
 
     switch (field) {
       case 'title':
@@ -101,19 +112,17 @@ export const NewRecipeMenu = ({ open, setOpen }: MenuProps) => {
         break;
       case 'cookMinutes': {
         setRecipe({ ...recipe, cookMinutes: parseInt(value) });
-        console.log(recipe.cookMinutes);
-
         break;
       }
-      case 'imageURL':
+      case 'imageUrl':
         // TODO URL validation
         setRecipe({ ...recipe, imageUrl: value });
         break;
+      case 'content':
+        setRecipe({ ...recipe, content: value });
+        break;
       case 'amount':
         setIngredientAmount(parseInt(value));
-        break;
-      case 'instructions':
-        setRecipe({ ...recipe, content: value });
         break;
       default:
         break;
@@ -125,19 +134,19 @@ export const NewRecipeMenu = ({ open, setOpen }: MenuProps) => {
 
     if (listedIngredients.length === 0) return;
 
-    if (selectedIngredient) {
+    if (selectedIngredientId) {
       setRecipe({
         ...recipe, ingredients: recipe.ingredients.concat({
           amount: ingredientAmount,
-          ingredient: selectedIngredient?.name,
-          ingredientId: selectedIngredient?.id,
+          ingredient: ingredients.find(ingredient => ingredient.id === selectedIngredientId)?.name,
+          ingredientId: selectedIngredientId,
         } as IngredientAmountDTO)
       });
     }
 
-    const newListedIngredients = listedIngredients.filter(ingredient => ingredient !== selectedIngredient);
-    if (newListedIngredients.length > 0) setSelectedIngredient(newListedIngredients[0]);
-    else setSelectedIngredient(null);
+    const newListedIngredients = listedIngredients.filter(ingredient => ingredient.id !== selectedIngredientId);
+    if (newListedIngredients.length > 0) setSelectedIngredientId(newListedIngredients[0].id);
+    else setSelectedIngredientId('');
     setIngredientAmount(1);
   };
 
@@ -147,7 +156,7 @@ export const NewRecipeMenu = ({ open, setOpen }: MenuProps) => {
     setRecipe({ ...recipe, ingredients: recipe.ingredients.filter(i => i !== ingredient) });
 
     const newListedIngredients = listedIngredients.concat(ingredients.filter(i => i.id === ingredient.ingredientId));
-    if (newListedIngredients.length > 0) setSelectedIngredient(newListedIngredients[0]);
+    if (newListedIngredients.length > 0) setSelectedIngredientId(newListedIngredients[0].id);
   };
 
   const formIsValid = () => {
@@ -208,6 +217,7 @@ export const NewRecipeMenu = ({ open, setOpen }: MenuProps) => {
             <h3 className='mb-2 font-semibold text-xl text-violet-900'>Some basic information</h3>
             <InputField
               label="Recipe name*"
+              name="title"
               value={recipe.title}
               onChange={(e) => handleFormChange(e, 'title')}
               className="mb-3"
@@ -216,14 +226,16 @@ export const NewRecipeMenu = ({ open, setOpen }: MenuProps) => {
             <InputField
               label="Cooking minutes"
               type="number"
+              name="cookMinutes"
               value={recipe.cookMinutes?.toString()}
               onChange={(e) => handleFormChange(e, 'cookMinutes')}
               className="mb-3"
             />
             <InputField
               label="Image URL"
+              name="imageUrl"
               value={recipe.imageUrl}
-              onChange={(e) => handleFormChange(e, 'imageURL')}
+              onChange={(e) => handleFormChange(e, 'imageUrl')}
               className="mb-3"
             />
           </>
@@ -234,8 +246,8 @@ export const NewRecipeMenu = ({ open, setOpen }: MenuProps) => {
             <h3 className='mb-2 font-semibold text-xl text-violet-900'>Pick some ingredients!</h3>
             <IngredientList
               ingredients={listedIngredients}
-              selectedIngredient={selectedIngredient}
-              setSelectedIngredient={setSelectedIngredient}
+              selectedIngredientId={selectedIngredientId}
+              setSelectedIngredientId={setSelectedIngredientId}
               className="mb-3"
             />
             <div className='mt-1'>
@@ -243,6 +255,7 @@ export const NewRecipeMenu = ({ open, setOpen }: MenuProps) => {
                 <InputField
                   label="Amount"
                   type="number"
+                  name="amount"
                   value={ingredientAmount.toString()}
                   onChange={(e) => handleFormChange(e, 'amount')}
                 />
@@ -272,11 +285,11 @@ export const NewRecipeMenu = ({ open, setOpen }: MenuProps) => {
       case 2:
         return (
           <>
-            <h3 className='mb-2 font-semibold text-xl text-violet-900'>And finally, some instructions</h3>
+            <h3 className='mb-2 font-semibold text-xl text-violet-900'>And finally, some content</h3>
             <TextareaField
               rows={10}
               value={recipe.content}
-              onChange={(e) => handleFormChange(e, 'instructions')}
+              onChange={(e) => handleFormChange(e, 'content')}
             />
           </>
         );

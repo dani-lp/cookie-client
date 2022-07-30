@@ -34,11 +34,11 @@ interface UnitResponse {
 }
 
 interface SelectorProps {
-  selectedUnit: string;
-  setSelectedUnit: (unit: string) => void;
+  selectedUnitId: string;
+  setSelectedUnitId: (unit: string) => void;
 }
 
-export const UnitSelector = ({ selectedUnit, setSelectedUnit }: SelectorProps) => {
+export const UnitSelector = ({ selectedUnitId, setSelectedUnitId }: SelectorProps) => {
   const { units, loadUnits, addUnit } = useStore((state) => ({
     units: state.units,
     loadUnits: state.loadUnits,
@@ -51,7 +51,7 @@ export const UnitSelector = ({ selectedUnit, setSelectedUnit }: SelectorProps) =
 
   const [unitError, setUnitError] = React.useState('');
 
-  const handleClick = (id: string) => () => setSelectedUnit(id);
+  const handleClick = (id: string) => () => setSelectedUnitId(id);
   const { response, error, isLoading } = useFetch('/units');
 
   React.useEffect(() => {
@@ -60,7 +60,7 @@ export const UnitSelector = ({ selectedUnit, setSelectedUnit }: SelectorProps) =
       newUnits.sort((a, b) => a.name.localeCompare(b.name));
       loadUnits(newUnits);
       if (newUnits.length > 0) {
-        setSelectedUnit(newUnits[0].id);
+        setSelectedUnitId(newUnits[0].id);
       }
     }
   }, [response]);
@@ -110,7 +110,7 @@ export const UnitSelector = ({ selectedUnit, setSelectedUnit }: SelectorProps) =
         <UnitItem
           key={unit.id}
           name={unit.name}
-          selected={selectedUnit === unit.id}
+          selected={selectedUnitId === unit.id}
           onClick={handleClick(unit.id)}
         />
       ))

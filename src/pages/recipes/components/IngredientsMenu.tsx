@@ -99,7 +99,7 @@ export const IngredientsMenu = ({ open, setOpen }: IngredientsMenuProps) => {
   }), shallow);
   const [ingredientName, setIngredientName] = React.useState('');
   const [formError, setFormError] = React.useState('');
-  const [selectedUnit, setSelectedUnit] = React.useState(units.length > 0 ? units[0].id : '');
+  const [selectedUnitId, setSelectedUnitId] = React.useState(units.length > 0 ? units[0].id : '');
   const [loading, setLoading] = React.useState(false);
 
   const ingredientHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -119,7 +119,7 @@ export const IngredientsMenu = ({ open, setOpen }: IngredientsMenuProps) => {
 
     const newIngredient = {
       name: ingredientName,
-      unit: selectedUnit,
+      unit: selectedUnitId,
     };
 
     // TODO move to hook
@@ -151,8 +151,8 @@ export const IngredientsMenu = ({ open, setOpen }: IngredientsMenuProps) => {
 
       <h4 className='text-sm'>Measurement unit</h4>
       <UnitSelector
-        selectedUnit={selectedUnit}
-        setSelectedUnit={setSelectedUnit}
+        selectedUnitId={selectedUnitId}
+        setSelectedUnitId={setSelectedUnitId}
       />
       <Button
         className='w-full mt-4'
