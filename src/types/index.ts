@@ -45,7 +45,7 @@ export interface RecipeDTO {
   imageUrl?: string;
   ingredients: {
     amount: number;
-    ingredient: string; // is
+    ingredient: string; // id
   }[];
 }
 

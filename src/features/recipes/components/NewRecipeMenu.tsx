@@ -28,9 +28,21 @@ import {
 } from '@/types';
 
 
-type ModalState = 0 | 1 | 2;
+type ModalStep = 'initial' | 'ingredients' | 'content';
+type Action =
+  | { type: 'toInitial', payload: null }
+  | { type: 'toIngredients', payload: null }
+  | { type: 'toContent', payload: null }
+  | { type: 'toPrevious', payload: null }
+  | { type: 'toNext', payload: null }
+  | { type: 'updateRecipe', payload: Recipe }
 
-type MenuSteps = 'title' | 'cookMinutes' | 'imageUrl' | 'amount' | 'content';
+interface ModalState {
+  recipe: Recipe;
+  step: ModalStep;
+}
+
+type MenuField = 'title' | 'cookMinutes' | 'imageUrl' | 'amount' | 'content';
 
 interface NewRecipeResponse {
   data: Recipe;
@@ -47,93 +59,110 @@ const recipeBase = {
   title: '',
   content: '',
   cookMinutes: undefined,
-  imageUrl: undefined,
+  imageUrl: '',
   ingredients: [],
 };
 
-export const NewRecipeMenu = ({ open, setOpen }: MenuProps) => {
-  const [step, setStep] = React.useState<ModalState>(0);
-  const [recipe, setRecipe] = React.useState<Recipe>(recipeBase);
+const canMove = (from: ModalStep, to: ModalStep, recipe: Recipe) => {
+  const initialOk = recipe.title.length > 0;
+  const ingredientsOk = recipe.ingredients.length > 0;
+
+  if (to === 'content') return initialOk && ingredientsOk;
+  if (from === 'initial' && to === 'ingredients') return initialOk;
+  return true;
+};
+
+// The return type is explicitly set because ts can't infer it
+const stepReducer = (state: ModalState, action: Action): ModalState => {
+  const { recipe, step } = state;
+  const { type, payload } = action;
+
+  switch (type) {
+    case 'toInitial':
+      // if (!canMove(step, 'initial', recipe)) return state; // not necessary for now
+      return { ...state, step: 'initial' };
+
+    case 'toIngredients':
+      if (!canMove(step, 'ingredients', recipe)) return state;  // TODO set warning
+      return { ...state, step: 'ingredients' };
+
+    case 'toContent':
+      if (!canMove(step, 'content', recipe)) return state;  // TODO set warning
+      return { ...state, step: 'content' };
+
+    case 'toPrevious':
+      if (!canMove(step, step === 'ingredients' ? 'initial' : 'ingredients', recipe)) return state;  // TODO set warning
+      if (step === 'ingredients') return { ...state, step: 'initial' };
+      if (step === 'content') return { ...state, step: 'ingredients' };
+      return state;
+
+    case 'toNext':
+      if (!canMove(step, step === 'initial' ? 'ingredients' : 'content', recipe)) return state;  // TODO set warning
+      if (step === 'initial') return { ...state, step: 'ingredients' };
+      if (step === 'ingredients') return { ...state, step: 'content' };
+      return state;
+
+    case 'updateRecipe':
+      return { ...state, recipe: payload };
+
+    default:
+      return state;
+  }
+};
+
+
+interface ModalContentProps {
+  recipe: Recipe;
+  onFormChange: (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+}
+
+const InitialContent = ({ recipe, onFormChange }: ModalContentProps) => {
+  return (
+    <>
+      <h3 className='mb-2 font-semibold text-xl text-violet-900'>Some basic information</h3>
+      <InputField
+        label="Recipe name*"
+        name="title"
+        value={recipe.title}
+        onChange={onFormChange}
+        className="mb-3"
+        autoFocus={false}
+      />
+      <InputField
+        label="Cooking minutes"
+        type="number"
+        name="cookMinutes"
+        value={recipe.cookMinutes === undefined ? '' : recipe.cookMinutes.toString()}
+        onChange={onFormChange}
+        className="mb-3"
+      />
+      <InputField
+        label="Image URL"
+        name="imageUrl"
+        value={recipe.imageUrl}
+        onChange={onFormChange}
+        className="mb-3"
+      />
+    </>
+  );
+};
+
+type IngredientContentProps = Omit<ModalContentProps, 'onFormChange'> & {
+  dispatchStep: React.Dispatch<Action>;
+}
+
+const IngredientsContent = (
+  {
+    recipe,
+    dispatchStep,
+  }: IngredientContentProps
+) => {
   const [selectedIngredientId, setSelectedIngredientId] = React.useState<string>('');
   const [ingredientAmount, setIngredientAmount] = React.useState(1);
+  const ingredients = useStore(state => state.ingredients);
 
-  const { ingredients, loadIngredients, addRecipe } = useStore((state) => ({
-    ingredients: state.ingredients,
-    loadIngredients: state.loadIngredients,
-    addRecipe: state.addRecipe,
-  }), shallow);
+  const listedIngredients = ingredients.filter(ingredient => !recipe.ingredients.map(i => i.ingredientId).includes(ingredient.id));
 
-  const listedIngredients = ingredients.filter(ingredient => {
-    return !recipe.ingredients.map(i => i.ingredientId).includes(ingredient.id);
-  });
-
-  const { response } = useFetch('/ingredients');
-
-  React.useEffect(() => {
-    if (response) {
-      console.log(response);
-
-      const newIngredients = response.data as Ingredient[];
-      newIngredients.sort((a, b) => a.name.localeCompare(b.name));
-      loadIngredients(newIngredients);
-      if (newIngredients.length > 0) {
-        setSelectedIngredientId(newIngredients[0].id);
-      }
-    }
-  }, [response]);
-
-  // TODO is this good UX?
-  React.useEffect(() => {
-    if (!open) {
-      setRecipe(recipeBase);
-      if (ingredients.length > 0) setSelectedIngredientId(ingredients[0].id);
-      setIngredientAmount(1);
-      setStep(0);
-    }
-  }, [open]);
-
-  const steps = [
-    { name: 'Recipe', icon: BookmarkAltIcon, clickCallback: () => setStep(0), selected: step === 0 },
-    { name: 'Ingredients', icon: ClipboardListIcon, clickCallback: () => setStep(1), selected: step === 1 },
-    { name: 'Steps', icon: DocumentTextIcon, clickCallback: () => setStep(2), selected: step === 2 },
-  ] as BreadcrumbsElement[];
-
-  // TODO use 'name' attribute
-  const handleFormChange = (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, field: MenuSteps) => {
-    const value = event.currentTarget.value;
-    const name = event.currentTarget.name;
-
-    if (name === 'amount') {
-      setIngredientAmount(parseInt(value));
-      return;
-    }
-    setRecipe({
-      ...recipe,
-      [name]: value
-    });
-
-    switch (field) {
-      case 'title':
-        setRecipe({ ...recipe, title: value });
-        break;
-      case 'cookMinutes': {
-        setRecipe({ ...recipe, cookMinutes: parseInt(value) });
-        break;
-      }
-      case 'imageUrl':
-        // TODO URL validation
-        setRecipe({ ...recipe, imageUrl: value });
-        break;
-      case 'content':
-        setRecipe({ ...recipe, content: value });
-        break;
-      case 'amount':
-        setIngredientAmount(parseInt(value));
-        break;
-      default:
-        break;
-    }
-  };
 
   const handleAddIngredient = (event: React.FormEvent) => {
     event.preventDefault();
@@ -141,12 +170,14 @@ export const NewRecipeMenu = ({ open, setOpen }: MenuProps) => {
     if (listedIngredients.length === 0) return;
 
     if (selectedIngredientId) {
-      setRecipe({
-        ...recipe, ingredients: recipe.ingredients.concat({
-          amount: ingredientAmount,
-          ingredient: ingredients.find(ingredient => ingredient.id === selectedIngredientId)?.name,
-          ingredientId: selectedIngredientId,
-        } as IngredientAmountDTO)
+      dispatchStep({
+        type: 'updateRecipe', payload: {
+          ...recipe, ingredients: recipe.ingredients.concat({
+            amount: ingredientAmount,
+            ingredient: ingredients.find(ingredient => ingredient.id === selectedIngredientId)?.name,
+            ingredientId: selectedIngredientId,
+          } as IngredientAmountDTO)
+        }
       });
     }
 
@@ -159,10 +190,136 @@ export const NewRecipeMenu = ({ open, setOpen }: MenuProps) => {
   const handleRemoveIngredient = (event: React.MouseEvent, ingredient: IngredientAmountDTO) => {
     event.preventDefault();
 
-    setRecipe({ ...recipe, ingredients: recipe.ingredients.filter(i => i !== ingredient) });
+    dispatchStep({
+      type: 'updateRecipe', payload: {
+        ...recipe,
+        ingredients: recipe.ingredients.filter(i => i !== ingredient)
+      }
+    });
 
     const newListedIngredients = listedIngredients.concat(ingredients.filter(i => i.id === ingredient.ingredientId));
     if (newListedIngredients.length > 0) setSelectedIngredientId(newListedIngredients[0].id);
+  };
+
+  const handleIngredientAmountChange = (event: React.FormEvent<HTMLInputElement>) => {
+    const value = parseInt(event.currentTarget.value);
+    if (value < 0) return;
+    setIngredientAmount(value);
+  };
+
+  return (
+    <>
+      <h3 className='mb-2 font-semibold text-xl text-violet-900'>Pick some ingredients!</h3>
+      <IngredientList
+        ingredients={listedIngredients}
+        selectedIngredientId={selectedIngredientId}
+        setSelectedIngredientId={setSelectedIngredientId}
+        className="mb-3"
+      />
+      <div className='mt-1'>
+        <form onSubmit={handleAddIngredient} className="flex items-end justify-between gap-2">
+          <InputField
+            label="Amount"
+            type="number"
+            name="amount"
+            value={ingredientAmount.toString()}
+            onChange={handleIngredientAmountChange}
+          />
+          <Button className="w-4 rounded-md mb-[1px]" type="submit" squared>
+            <PlusIcon className="h-5 w-5" />
+          </Button>
+        </form>
+      </div>
+      <div className='flex flex-wrap items-center justify-start gap-2 mt-1'>
+        {recipe.ingredients.map(ingredient => (
+          <div
+            key={ingredient.ingredientId}
+            className="bg-violet-300 shadow-sm rounded-full px-2 py-0.5 flex items-center justify-center gap-1"
+          >
+            {ingredient.ingredient}
+            <div
+              onClick={(e) => handleRemoveIngredient(e, ingredient)}
+              className="rounded-full p-0.5 hover:bg-violet-700 cursor-pointer hover:text-white transition-colors"
+            >
+              <XIcon className="h-4 w-4" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+};
+
+const TextContent = ({ recipe, onFormChange }: ModalContentProps) => {
+  return (
+    <>
+      <h3 className='mb-2 font-semibold text-xl text-violet-900'>And finally, some content</h3>
+      <TextareaField
+        rows={10}
+        name='content'
+        value={recipe.content}
+        onChange={onFormChange}
+      />
+    </>
+  );
+};
+
+export const NewRecipeMenu = ({ open, setOpen }: MenuProps) => {
+  const [{ recipe, step }, dispatchStep] = React.useReducer(stepReducer, {
+    recipe: recipeBase,
+    step: 'initial',
+  });
+
+  const { loadIngredients, addRecipe } = useStore((state) => ({
+    loadIngredients: state.loadIngredients,
+    addRecipe: state.addRecipe,
+  }), shallow);
+
+  // dispatch helpers
+  const toInitial = () => dispatchStep({ type: 'toInitial', payload: null });
+  const toIngredients = () => dispatchStep({ type: 'toIngredients', payload: null });
+  const toContent = () => dispatchStep({ type: 'toContent', payload: null });
+  const resetRecipe = () => dispatchStep({ type: 'updateRecipe', payload: recipeBase });
+
+  // data fetching
+  const { response } = useFetch('/ingredients');
+
+  React.useEffect(() => {
+    if (response) {
+      const newIngredients = response.data as Ingredient[];
+      newIngredients.sort((a, b) => a.name.localeCompare(b.name));
+      loadIngredients(newIngredients);
+    }
+  }, [response]);
+
+  // TODO is this good UX?
+  React.useEffect(() => {
+    if (!open) {
+      resetRecipe();
+      toInitial();
+    }
+  }, [open]);
+
+  const steps = [
+    { name: 'Recipe', icon: BookmarkAltIcon, clickCallback: toInitial, selected: step === 'initial' },
+    { name: 'Ingredients', icon: ClipboardListIcon, clickCallback: () => toIngredients, selected: step === 'ingredients' },
+    { name: 'Steps', icon: DocumentTextIcon, clickCallback: () => toContent, selected: step === 'content' },
+  ] as BreadcrumbsElement[];
+
+  const handleFormChange = (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    let value: string | number = event.currentTarget.value;
+    const name = event.currentTarget.name as MenuField;
+
+    if (name === 'cookMinutes') {
+      value = parseInt(value);
+      if (value < 0) return;
+    }
+    dispatchStep({
+      type: 'updateRecipe', payload: {
+        ...recipe,
+        [name]: value
+      }
+    });
   };
 
   const formIsValid = () => {
@@ -193,119 +350,15 @@ export const NewRecipeMenu = ({ open, setOpen }: MenuProps) => {
     }
   };
 
-  const handleNextButton = () => {
-    switch (step) {
-      case 0:
-        if (recipe.title.length > 0) {
-          setStep(1);
-          break;
-        }
-        // TODO error message
-        break;
-      case 1:
-        if (recipe.ingredients.length > 0) {
-          setStep(2);
-          break;
-        }
-        // TODO error message
-        break;
-      case 2:
-        handleCreateRecipe();
-        break;
-    }
-  };
+  // bit ugly, but does the trick
+  const content = step === 'initial'
+    ? <InitialContent recipe={recipe} onFormChange={handleFormChange} />
+    : step === 'ingredients'
+      ? <IngredientsContent recipe={recipe} dispatchStep={dispatchStep} />
+      : <TextContent recipe={recipe} onFormChange={handleFormChange} />;
 
-  const content = (step: ModalState) => {
-    switch (step) {
-      case 0:
-        return (
-          <>
-            <h3 className='mb-2 font-semibold text-xl text-violet-900'>Some basic information</h3>
-            <InputField
-              label="Recipe name*"
-              name="title"
-              value={recipe.title}
-              onChange={(e) => handleFormChange(e, 'title')}
-              className="mb-3"
-              autoFocus={false}
-            />
-            <InputField
-              label="Cooking minutes"
-              type="number"
-              name="cookMinutes"
-              value={recipe.cookMinutes?.toString()}
-              onChange={(e) => handleFormChange(e, 'cookMinutes')}
-              className="mb-3"
-            />
-            <InputField
-              label="Image URL"
-              name="imageUrl"
-              value={recipe.imageUrl}
-              onChange={(e) => handleFormChange(e, 'imageUrl')}
-              className="mb-3"
-            />
-          </>
-        );
-      case 1:
-        return (
-          <>
-            <h3 className='mb-2 font-semibold text-xl text-violet-900'>Pick some ingredients!</h3>
-            <IngredientList
-              ingredients={listedIngredients}
-              selectedIngredientId={selectedIngredientId}
-              setSelectedIngredientId={setSelectedIngredientId}
-              className="mb-3"
-            />
-            <div className='mt-1'>
-              <form onSubmit={handleAddIngredient} className="flex items-end justify-between gap-2">
-                <InputField
-                  label="Amount"
-                  type="number"
-                  name="amount"
-                  value={ingredientAmount.toString()}
-                  onChange={(e) => handleFormChange(e, 'amount')}
-                />
-                <Button className="w-4 rounded-md mb-[1px]" type="submit" squared>
-                  <PlusIcon className="h-5 w-5" />
-                </Button>
-              </form>
-            </div>
-            <div className='flex flex-wrap items-center justify-start gap-2 mt-1'>
-              {recipe.ingredients.map(ingredient => (
-                <div
-                  key={ingredient.ingredientId}
-                  className="bg-violet-300 shadow-sm rounded-full px-2 py-0.5 flex items-center justify-center gap-1"
-                >
-                  {ingredient.ingredient}
-                  <div
-                    onClick={(e) => handleRemoveIngredient(e, ingredient)}
-                    className="rounded-full p-0.5 hover:bg-violet-700 cursor-pointer hover:text-white transition-colors"
-                  >
-                    <XIcon className="h-4 w-4" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </>
-        );
-      case 2:
-        return (
-          <>
-            <h3 className='mb-2 font-semibold text-xl text-violet-900'>And finally, some content</h3>
-            <TextareaField
-              rows={10}
-              value={recipe.content}
-              onChange={(e) => handleFormChange(e, 'content')}
-            />
-          </>
-        );
-      default:
-        return null;
-    }
-  };
 
-  // TODO maintain proper format on content textarea
-  // TODO validation between step changes
+  // TODO fix the scrolling bugs
 
   return (
     <Modal open={open} setOpen={setOpen} className="min-h-[24rem] h-[28rem]">
@@ -318,7 +371,7 @@ export const NewRecipeMenu = ({ open, setOpen }: MenuProps) => {
       </div>
 
       <div className='px-3 mb-20 max-h-96 overflow-y-auto'>
-        {content(step)}
+        {content}
       </div>
 
       <div className="absolute bottom-0 h-16 w-full bg-gray-50 px-4 py-3 sm:px-6 flex flex-1 items-center justify-around">
@@ -326,17 +379,20 @@ export const NewRecipeMenu = ({ open, setOpen }: MenuProps) => {
           size='sm'
           className='w-32'
           variant='inverseBlack'
-          onClick={() => { if (step > 0) setStep(step - 1 as ModalState); }}
-          disabled={step === 0}
+          onClick={() => dispatchStep({ type: 'toPrevious', payload: null })}
+          disabled={step === 'initial'}
         >
           Previous
         </Button>
         <Button
           size='sm'
           className='w-32'
-          onClick={handleNextButton}
+          onClick={() => {
+            if (step === 'content') handleCreateRecipe();
+            else dispatchStep({ type: 'toNext', payload: null });
+          }}
         >
-          {step < 2 ? 'Next' : 'Create'}
+          {step === 'content' ? 'Create' : 'Next'}
         </Button>
       </div>
     </Modal>

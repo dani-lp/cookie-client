@@ -8,6 +8,7 @@ import { DEFAULT_RECIPE_IMG_URL } from '@/config';
 import { useFetch } from '@/hooks/useFetch';
 import { useStore } from '@/store/useStore';
 
+// TODO fix 404 error on API
 export const RecipeDetail = () => {
   const recipeId = useParams().id;
   const recipe = useStore(state => state.recipes).find(recipe => recipe.id === recipeId);
