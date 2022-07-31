@@ -2,13 +2,14 @@ import * as React from 'react';
 import shallow from 'zustand/shallow';
 import { ExclamationCircleIcon } from '@heroicons/react/outline';
 
-import { Header } from './components';
-import { RecipeItem } from './components/RecipeItem';
-import { Spinner } from '../../components/Elements/Spinner';
-import { useStore } from '../../store/useStore';
-import { useSearch } from './stores/search';
-import { useFetch } from '../../hooks/useFetch';
-import { Recipe } from '../../types';
+import { Header } from '../components';
+import { RecipeItem } from '../components/RecipeItem';
+import { useSearch } from '../stores/search';
+
+import { Spinner } from '@/components/Elements/Spinner';
+import { useStore } from '@/store/useStore';
+import { useFetch } from '@/hooks/useFetch';
+import { Recipe } from '@/types';
 
 // TODO list of the user's recipes (saved + created), with filters
 export const Recipes = () => {

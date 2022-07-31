@@ -1,8 +1,8 @@
 import * as React from 'react';
 import shallow from 'zustand/shallow';
 
-import { useStore } from '../store/useStore';
-import { axios } from '../lib/axios';
+import { useStore } from '@/store/useStore';
+import { axios } from '@/lib/axios';
 
 
 export const useUserRequired = (): boolean => {

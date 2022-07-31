@@ -9,17 +9,23 @@ import {
   XIcon
 } from '@heroicons/react/outline';
 
-import { Modal } from '../../../components/Overlay';
-import { Button } from '../../../components/Elements/Button';
-import { InputField } from '../../../components/Form';
-import { Breadcrumbs, BreadcrumbsElement } from '../../../components/Elements/Breadcrumbs';
-import { TextareaField } from '../../../components/Form/TextareaField';
-
 import { IngredientList } from './IngredientList';
-import { useFetch } from '../../../hooks/useFetch';
-import { useStore } from '../../../store/useStore';
-import { axios } from '../../../lib/axios';
-import { Ingredient, IngredientAmountDTO, Recipe, RecipeDTO } from '../../../types';
+
+import { Modal } from '@/components/Overlay';
+import { Button } from '@/components/Elements/Button';
+import { InputField } from '@/components/Form';
+import { Breadcrumbs, BreadcrumbsElement } from '@/components/Elements/Breadcrumbs';
+import { TextareaField } from '@/components/Form';
+
+import { useFetch } from '@/hooks/useFetch';
+import { useStore } from '@/store/useStore';
+import { axios } from '@/lib/axios';
+import {
+  Ingredient,
+  IngredientAmountDTO,
+  Recipe,
+  RecipeDTO
+} from '@/types';
 
 
 type ModalState = 0 | 1 | 2;

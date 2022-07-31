@@ -2,14 +2,16 @@ import * as React from 'react';
 import shallow from 'zustand/shallow';
 import { ExclamationCircleIcon, PlusIcon } from '@heroicons/react/solid';
 
-import { Spinner } from '../../../components/Elements/Spinner';
-import { Button } from '../../../components/Elements/Button';
 import { SearchBar } from './SearchBar';
-import { axios } from '../../../lib/axios';
-import { useStore } from '../../../store/useStore';
 import { useSearch } from '../stores/search';
-import { useFetch } from '../../../hooks/useFetch';
-import { Unit } from '../../../types';
+
+import { Spinner } from '@/components/Elements/Spinner';
+import { Button } from '@/components/Elements/Button';
+
+import { axios } from '@/lib/axios';
+import { useFetch } from '@/hooks/useFetch';
+import { useStore } from '@/store/useStore';
+import { Unit } from '@/types';
 
 interface UnitProps {
   name: string;

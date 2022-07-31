@@ -6,12 +6,12 @@ import {
   BookmarkAltIcon,
   LogoutIcon,
 } from '@heroicons/react/outline';
-import { axios } from '../../lib/axios';
 
-import logo from '../../assets/logo.png';
-import { Button } from '../Elements/Button';
-import { ConfirmModal } from '../Overlay/ConfirmModal';
-import { useStore } from '../../store/useStore';
+import logo from '@/assets/logo.png';
+import { Button } from '@/components/Elements/Button';
+import { ConfirmModal } from '@/components/Overlay/ConfirmModal';
+import { axios } from '@/lib/axios';
+import { useStore } from '@/store/useStore';
 
 type NavigationItem = {
   name: string;

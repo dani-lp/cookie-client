@@ -2,10 +2,11 @@ import * as React from 'react';
 import { useParams } from 'react-router-dom';
 import { ClockIcon } from '@heroicons/react/outline';
 
-import { Spinner } from '../../components/Elements/Spinner';
-import { useFetch } from '../../hooks/useFetch';
-import { useStore } from '../../store/useStore';
-import { DEFAULT_RECIPE_IMG_URL } from '../../config';
+import { Spinner } from '@/components/Elements/Spinner';
+
+import { DEFAULT_RECIPE_IMG_URL } from '@/config';
+import { useFetch } from '@/hooks/useFetch';
+import { useStore } from '@/store/useStore';
 
 export const RecipeDetail = () => {
   const recipeId = useParams().id;

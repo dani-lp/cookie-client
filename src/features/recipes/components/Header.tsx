@@ -2,11 +2,12 @@ import * as React from 'react';
 import { Disclosure, Transition } from '@headlessui/react';
 import { ChevronDoubleDownIcon, PlusIcon } from '@heroicons/react/solid';
 
-import { Button } from '../../../components/Elements/Button';
 import { SearchBar } from './SearchBar';
 import { IngredientsMenu } from './IngredientsMenu';
 import { useSearch } from '../stores/search';
 import { NewRecipeMenu } from './NewRecipeMenu';
+
+import { Button } from '@/components/Elements/Button';
 
 interface ToggleProps {
   open: boolean;

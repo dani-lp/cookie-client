@@ -1,6 +1,6 @@
 import * as React from 'react';
 import type { AxiosError, AxiosResponse } from 'axios';
-import { axios } from '../lib/axios';
+import { axios } from '@/lib/axios';
 
 // type guards
 const isAbortError = (error: AxiosError | Error): error is DOMException => {

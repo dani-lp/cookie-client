@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import logo from '../../assets/logo.png';
-import { Button } from '../Elements/Button';
+import logo from '@/assets/logo.png';
+import { Button } from '@/components/Elements/Button';
 
 const Logo = () => {
   return (

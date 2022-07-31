@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from 'react-router';
 
 import { PublicLayout } from '../components/Layout/PublicLayout';
-import { Home, Login, Register } from '../pages';
+import { Home, Login, Register } from '../features';
 
 const App = () => {
   return (

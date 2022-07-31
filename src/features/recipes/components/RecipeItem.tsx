@@ -2,8 +2,8 @@ import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ClockIcon } from '@heroicons/react/outline';
 
-import { Recipe } from '../../../types';
-import { DEFAULT_RECIPE_IMG_URL } from '../../../config';
+import { Recipe } from '@/types';
+import { DEFAULT_RECIPE_IMG_URL } from '@/config';
 
 interface RecipeItemProps {
   recipe: Recipe;

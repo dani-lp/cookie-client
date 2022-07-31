@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { SearchBar } from './SearchBar';
-import { Ingredient } from '../../../types';
+import { Ingredient } from '@/types';
 
 
 interface IngredientListProps {

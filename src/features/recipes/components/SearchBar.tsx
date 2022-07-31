@@ -1,5 +1,6 @@
 import { SearchIcon } from '@heroicons/react/solid';
-import { InputField } from '../../../components/Form';
+
+import { InputField } from '@/components/Form';
 
 type SearchBarProps = {
   value: string;

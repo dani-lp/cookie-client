@@ -1,15 +1,17 @@
 import * as React from 'react';
 import shallow from 'zustand/shallow';
 
-import { Button } from '../../../components/Elements/Button';
-import { InputField } from '../../../components/Form';
-import { SlideOver } from '../../../components/Overlay';
 import { UnitSelector } from './UnitSelector';
-import { axios } from '../../../lib/axios';
-import { useStore } from '../../../store/useStore';
-import { Ingredient } from '../../../types';
-import { useFetch } from '../../../hooks/useFetch';
-import { Spinner } from '../../../components/Elements/Spinner';
+
+import { Button } from '@/components/Elements/Button';
+import { Spinner } from '@/components/Elements/Spinner';
+import { InputField } from '@/components/Form';
+import { SlideOver } from '@/components/Overlay';
+
+import { useFetch } from '@/hooks/useFetch';
+import { axios } from '@/lib/axios';
+import { useStore } from '@/store/useStore';
+import { Ingredient } from '@/types';
 
 
 // TODO move functionality into IngredientList.tsx

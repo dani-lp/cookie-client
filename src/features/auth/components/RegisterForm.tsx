@@ -1,10 +1,10 @@
 import { Formik } from 'formik';
-import { axios } from '../../../lib/axios';
 
-import { Button } from '../../../components/Elements/Button';
-import { InputField } from '../../../components/Form';
-import { User } from '../../../types';
-import { useStore } from '../../../store/useStore';
+import { Button } from '@/components/Elements/Button';
+import { InputField } from '@/components/Form';
+import { axios } from '@/lib/axios';
+import { useStore } from '@/store/useStore';
+import { User } from '@/types';
 
 interface FormErrors {
   username?: string;
